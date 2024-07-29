@@ -132,9 +132,8 @@ export default {
       diaChi: { required },
       giaTriNen: { required },
       dienTich: { required },
-      ngayKyHopDong: { required },
+
       trangThai: { required },
-      sdt: { required },
     },
   },
 
@@ -235,7 +234,17 @@ export default {
         .then((res) => {
           if (res.code === 0) {
             console.log(res);
-            this.model = baiThiModel.toJson(res.data);
+            if (res.code === 0) {
+              const data = baiThiModel.fromJson(res.data);
+              this.model = {
+                ...data,
+                ngayKyHopDong: data.ngayKyHopDong
+                  ? new Date(data.ngayKyHopDong)
+                  : null,
+              };
+              console.log(this.model);
+              this.showModalIsPublish = true;
+            }
             this.showModal = true;
           } else {
             this.$store.dispatch("snackBarStore/addNotify", {
@@ -280,7 +289,6 @@ export default {
       if (node.id) {
         this.itemFilter.trangThaiId = node.id;
       }
-      console.log(" log node ", node);
     },
     handleSearch() {
       console.log("LOG HANDLE SEARCH LICH SU GIAO DICH ", this.itemFilter);
@@ -469,7 +477,7 @@ export default {
                         <div class="col-6">
                           <div class="mb-3">
                             <label class="text-left">Ghi chú</label>
-                            <span style="color: red">&nbsp;*</span>
+
                             <input type="hidden" v-model="model.id" />
                             <input
                               id="userName"
@@ -500,7 +508,7 @@ export default {
                         <div class="col-6">
                           <div class="mb-3">
                             <label class="text-left">Tên người mua</label>
-                            <span style="color: red">&nbsp;*</span>
+
                             <input type="hidden" v-model="model.id" />
                             <input
                               id="userName"
@@ -515,7 +523,7 @@ export default {
                         <div class="col-6">
                           <div class="mb-3">
                             <label class="text-left">Số điện thoại</label>
-                            <span style="color: red">&nbsp;*</span>
+
                             <input type="hidden" v-model="model.id" />
                             <input
                               id="lastName"
@@ -523,24 +531,13 @@ export default {
                               type="number"
                               class="form-control"
                               :disabled="!isStatusOne"
-                              placeholder="Nhập diện tích"
-                              maxlength="10"
-                              :class="{
-                                'is-invalid': submitted && $v.model.sdt.$error,
-                              }"
+                              placeholder="Nhập số điện thoại"
                             />
-                            <div
-                              v-if="submitted && !$v.model.sdt.required"
-                              class="invalid-feedback"
-                            >
-                              Số điên thoại phải đủ 10 kí tự
-                            </div>
                           </div>
                         </div>
 
                         <div class="col-6">
                           <div class="mb-3">
-                            <span style="color: red">&nbsp;*</span>
                             <input type="hidden" v-model="model.id" />
 
                             <label>Thời gian bắt đầu</label>
@@ -555,15 +552,15 @@ export default {
                         <div class="col-6">
                           <div class="mb-3">
                             <label class="text-left">CMN/CCCD</label>
-                            <span style="color: red">&nbsp;*</span>
+
                             <input type="hidden" v-model="model.id" />
                             <input
                               id="lastName"
                               v-model="model.cmnd"
-                              type="text"
+                              type="number"
                               class="form-control"
                               :disabled="!isStatusOne"
-                              placeholder="Nhập giá trị nền"
+                              placeholder="Nhập vào CMND/CCCD"
                             />
                           </div>
                         </div>
